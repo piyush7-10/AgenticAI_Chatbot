@@ -98,76 +98,6 @@ class FollowUpManager:
                 'context_type': 'general_help'
             }
         }
-    
-    def format_response_intelligently(response: str) -> str:
-        """
-        Intelligently format responses for better readability
-        - Converts long paragraphs to bullet points
-        - Preserves already well-formatted content
-        - Keeps short responses as-is
-        """
-        
-        # If response is already well-formatted (has bullets/structure), return as-is
-        if '•' in response or '✅' in response or '📱' in response:
-            return response
-        
-        # If response is short (less than 200 chars), keep as-is
-        if len(response) < 200:
-            return response
-        
-        lines = response.split('\n')
-        formatted_lines = []
-        current_paragraph = []
-        
-        for line in lines:
-            line = line.strip()
-            
-            # Skip empty lines
-            if not line:
-                if current_paragraph:
-                    # Convert accumulated paragraph to points
-                    para_text = ' '.join(current_paragraph)
-                    if len(para_text) > 150:  # Only convert long paragraphs
-                        # Split into sentences
-                        sentences = para_text.replace('. ', '.|').split('|')
-                        for sentence in sentences:
-                            if sentence.strip():
-                                formatted_lines.append(f"• {sentence.strip()}")
-                    else:
-                        formatted_lines.append(para_text)
-                    current_paragraph = []
-                formatted_lines.append('')
-                continue
-            
-            # Check if line is already a header or bullet
-            if line.startswith(('•', '-', '*', '📱', '🏠', '💰', '✅', '🎯', '📊')):
-                if current_paragraph:
-                    formatted_lines.append(' '.join(current_paragraph))
-                    current_paragraph = []
-                formatted_lines.append(line)
-            # Check if it's a header (ends with colon)
-            elif line.endswith(':'):
-                if current_paragraph:
-                    formatted_lines.append(' '.join(current_paragraph))
-                    current_paragraph = []
-                formatted_lines.append(f"\n{line}")
-            else:
-                # Accumulate paragraph lines
-                current_paragraph.append(line)
-        
-        # Handle remaining paragraph
-        if current_paragraph:
-            para_text = ' '.join(current_paragraph)
-            if len(para_text) > 150:
-                sentences = para_text.replace('. ', '.|').split('|')
-                for sentence in sentences:
-                    if sentence.strip():
-                        formatted_lines.append(f"• {sentence.strip()}")
-            else:
-                formatted_lines.append(para_text)
-        
-        return '\n'.join(formatted_lines)
-
         
     def needs_follow_up(self, query: str) -> Tuple[bool, Optional[str], Optional[str]]:
         """
@@ -791,7 +721,6 @@ class JioOrchestrator:
                 # Default to sequential
                 result = self._orchestrate_sequential_with_context(query, rag_context, mcp_data, verbose)
             
-            result = format_response_intelligently(result)
             self.metrics["successful_orchestrations"] += 1
             
             # Add metadata
@@ -847,7 +776,7 @@ class JioOrchestrator:
         if verbose:
             print("\n📄 SEQUENTIAL ORCHESTRATION WITH CONTEXT")
         
-        # Prepare context string
+        # Prepare context string (same as before)
         context_parts = []
         
         if rag_context:
@@ -870,33 +799,52 @@ class JioOrchestrator:
         
         full_context = "\n\n".join(context_parts) if context_parts else "No additional context available."
         
-        # Create comprehensive task with context
+        # UPDATED TASK WITH STRICT FORMATTING
         comprehensive_task = Task(
             description=f"""
             User Query: '{query}'
             
-            AVAILABLE INFORMATION FROM SYSTEMS:
+            AVAILABLE INFORMATION:
             {full_context}
             
-            Instructions:
-            1. USE THE PROVIDED CONTEXT to answer accurately
-            2. For readability:
-            - Break long explanations into clear points
-            - Use bullet points (•) for lists
-            - Keep sentences concise
-            - Use headers for different sections
-            3. For plan details, structure as:
-            Plan Name: ₹XXX
+            CRITICAL INSTRUCTIONS - MUST FOLLOW:
+            
+            1. FORMAT RULES:
+            • Use BULLET POINTS only - NO paragraphs
+            • Each bullet = ONE fact (max 15 words)
+            • Total response: 8-12 bullet points maximum
+            • One emoji per section (not every line)
+            
+            2. STRUCTURE:
+            Header (if needed):
+            • Point 1: specific fact
+            • Point 2: specific fact
+            • Point 3: specific fact
+            
+            3. FOR PLANS:
+            ₹XXX Plan:
             • Data: X GB/day
             • Validity: X days
-            • Key benefit
-            4. Include prices in ₹ (Indian Rupees)
-            5. Be friendly, helpful, and specific
+            • Daily cost: ₹XX
+            • Best for: [user type]
             
-            Provide a clear, well-structured response. Long paragraphs should be broken into digestible points.
+            4. FOR COMPARISONS:
+            • Plan A: key fact
+            • Plan B: key fact
+            • Winner: [plan] - [5 word reason]
+            
+            5. BANNED:
+            • Long sentences
+            • Multiple facts per bullet
+            • Marketing language
+            • Obvious information
+            • Explanations longer than 15 words
+            
+            BE CRISP. BE CLEAR. NO FLUFF.
+            If you write paragraphs, you have failed.
             """,
             agent=self.research_agent.get_agent(),
-            expected_output="Well-structured response with good readability"
+            expected_output="Bullet-point response, max 12 points, under 150 words total"
         )
         
         # Create simplified crew
