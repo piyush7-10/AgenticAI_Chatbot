@@ -98,6 +98,76 @@ class FollowUpManager:
                 'context_type': 'general_help'
             }
         }
+    
+    def format_response_intelligently(response: str) -> str:
+        """
+        Intelligently format responses for better readability
+        - Converts long paragraphs to bullet points
+        - Preserves already well-formatted content
+        - Keeps short responses as-is
+        """
+        
+        # If response is already well-formatted (has bullets/structure), return as-is
+        if '•' in response or '✅' in response or '📱' in response:
+            return response
+        
+        # If response is short (less than 200 chars), keep as-is
+        if len(response) < 200:
+            return response
+        
+        lines = response.split('\n')
+        formatted_lines = []
+        current_paragraph = []
+        
+        for line in lines:
+            line = line.strip()
+            
+            # Skip empty lines
+            if not line:
+                if current_paragraph:
+                    # Convert accumulated paragraph to points
+                    para_text = ' '.join(current_paragraph)
+                    if len(para_text) > 150:  # Only convert long paragraphs
+                        # Split into sentences
+                        sentences = para_text.replace('. ', '.|').split('|')
+                        for sentence in sentences:
+                            if sentence.strip():
+                                formatted_lines.append(f"• {sentence.strip()}")
+                    else:
+                        formatted_lines.append(para_text)
+                    current_paragraph = []
+                formatted_lines.append('')
+                continue
+            
+            # Check if line is already a header or bullet
+            if line.startswith(('•', '-', '*', '📱', '🏠', '💰', '✅', '🎯', '📊')):
+                if current_paragraph:
+                    formatted_lines.append(' '.join(current_paragraph))
+                    current_paragraph = []
+                formatted_lines.append(line)
+            # Check if it's a header (ends with colon)
+            elif line.endswith(':'):
+                if current_paragraph:
+                    formatted_lines.append(' '.join(current_paragraph))
+                    current_paragraph = []
+                formatted_lines.append(f"\n{line}")
+            else:
+                # Accumulate paragraph lines
+                current_paragraph.append(line)
+        
+        # Handle remaining paragraph
+        if current_paragraph:
+            para_text = ' '.join(current_paragraph)
+            if len(para_text) > 150:
+                sentences = para_text.replace('. ', '.|').split('|')
+                for sentence in sentences:
+                    if sentence.strip():
+                        formatted_lines.append(f"• {sentence.strip()}")
+            else:
+                formatted_lines.append(para_text)
+        
+        return '\n'.join(formatted_lines)
+
         
     def needs_follow_up(self, query: str) -> Tuple[bool, Optional[str], Optional[str]]:
         """
@@ -721,6 +791,7 @@ class JioOrchestrator:
                 # Default to sequential
                 result = self._orchestrate_sequential_with_context(query, rag_context, mcp_data, verbose)
             
+            result = format_response_intelligently(result)
             self.metrics["successful_orchestrations"] += 1
             
             # Add metadata
@@ -809,18 +880,23 @@ class JioOrchestrator:
             
             Instructions:
             1. USE THE PROVIDED CONTEXT to answer accurately
-            2. If plan details are provided above, use those EXACT details
-            3. If comparison is provided, present it clearly
-            4. Format response with bullets and emojis for readability
-            5. Include prices in ₹ (Indian Rupees)
-            6. Be friendly, helpful, and specific
-            7. If recommendations are provided, present them clearly
-            8. DO NOT make up information - use only what's provided above
+            2. For readability:
+            - Break long explanations into clear points
+            - Use bullet points (•) for lists
+            - Keep sentences concise
+            - Use headers for different sections
+            3. For plan details, structure as:
+            Plan Name: ₹XXX
+            • Data: X GB/day
+            • Validity: X days
+            • Key benefit
+            4. Include prices in ₹ (Indian Rupees)
+            5. Be friendly, helpful, and specific
             
-            Provide a complete, accurate, and helpful response based on the context above.
+            Provide a clear, well-structured response. Long paragraphs should be broken into digestible points.
             """,
             agent=self.research_agent.get_agent(),
-            expected_output="Complete response using provided context"
+            expected_output="Well-structured response with good readability"
         )
         
         # Create simplified crew
