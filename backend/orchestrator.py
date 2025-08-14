@@ -776,7 +776,7 @@ class JioOrchestrator:
         if verbose:
             print("\n📄 SEQUENTIAL ORCHESTRATION WITH CONTEXT")
         
-        # Prepare context string (same as before)
+        # Prepare context string
         context_parts = []
         
         if rag_context:
@@ -799,6 +799,7 @@ class JioOrchestrator:
         
         full_context = "\n\n".join(context_parts) if context_parts else "No additional context available."
         
+        # Create comprehensive task with context
         comprehensive_task = Task(
             description=f"""
             User Query: '{query}'
@@ -808,18 +809,19 @@ class JioOrchestrator:
             
             Instructions:
             1. USE THE PROVIDED CONTEXT to answer accurately
-            2. Format your response with bullet points for better readability
-            3. Keep each point concise and specific
-            4. For plan details, show: price, data, validity, daily cost
-            5. For comparisons, clearly show the winner
-            6. Include prices in ₹ (Indian Rupees)
-            7. Be friendly and helpful
-            8. Use the exact information provided above
+            2. If plan details are provided above, use those EXACT details
+            3. If comparison is provided, present it clearly
+            4. Format response with bullets and emojis for readability
+            5. Include prices in ₹ (Indian Rupees)
+            6. Be friendly, helpful, and specific
+            7. If recommendations are provided, present them clearly
+            8. DO NOT make up information - use only what's provided above
+            9. Keep responses concise but complete - use bullet points where appropriate
             
-            Provide a clear, well-structured response using bullet points where appropriate.
+            Provide a complete, accurate, and helpful response based on the context above.
             """,
             agent=self.research_agent.get_agent(),
-            expected_output="Clear, structured response with specific details"
+            expected_output="Complete response using provided context with bullet points for clarity"
         )
         
         # Create simplified crew

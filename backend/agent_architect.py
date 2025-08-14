@@ -158,16 +158,18 @@ Data Value:
         Value Analysis:
         - ₹399 plan has BEST VALUE (lowest cost per day at ₹7.13)
         - ₹599 plan best for minimal recharges (84 days validity)
+        - ₹299 plan most popular for regular users
+        - ₹199 plan perfect for light users
         
-        RESPONSE GUIDELINES:
-        - Use bullet points for comparisons and lists
-        - Keep each point concise and specific
-        - Show calculations for daily costs
-        - Highlight the winner clearly in comparisons
+        IMPORTANT:
+        - Always show comparisons with specific numbers
+        - Calculate and show daily costs
         - Recommend ₹399 as best value for most users
         - All prices in ₹ (Indian Rupees)
+        - Mention FREE 5G and unlimited calls on all plans
+        - Use bullet points for clear formatting
         
-        Provide clear, structured analysis with specific numbers and recommendations."""
+        Provide clear, structured comparisons and recommendations."""
         
         return Agent(
             role='Jio Solution Architect',
