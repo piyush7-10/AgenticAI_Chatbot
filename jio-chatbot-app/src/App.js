@@ -186,6 +186,21 @@ function App() {
         <div className="gradient-orb orb-3" />
         <div className="particle-field" />
       </div>
+      
+      {/* Add this right after <div className="animated-bg"> */}
+      <div className="animated-bg">
+        {/* Remove gradient orbs */}
+        {/* Add YouTube Video Background */}
+        <div className="video-background">
+          <iframe
+            src="https://www.youtube.com/embed/K03Gu5T7Fyo?autoplay=1&mute=1&loop=1&playlist=K03Gu5T7Fyo&controls=0&showinfo=0&rel=0&modestbranding=1"
+            frameBorder="0"
+            allow="autoplay; loop"
+            allowFullScreen
+            title="Jio Background"
+          />
+        </div>
+      </div>
 
       {/* Main Content */}
       <div className="main-container">
@@ -196,6 +211,11 @@ function App() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
+          {/* Add Logo Here */}
+          <div className="jio-logo">
+            <img src="https://www.jio.com/en-in/4g-logo-img/jio-logo.png" alt="Jio" />
+          </div>
+          
           <div className="hero-badge">
             <span className="badge-icon">{Icons.sparkle}</span>
             <span>AI-Powered Telecom</span>
@@ -465,7 +485,7 @@ function App() {
                       {msg.type === 'bot' ? Icons.robot : Icons.user}
                     </div>
                     <div className={`message-bubble ${msg.error ? 'error' : ''}`}>
-                      <div className="message-text" style={{whiteSpace: 'pre-line'}}>{msg.text}</div>
+                      <div className="message-text">{msg.text}</div>
                       <div className="message-time">
                         {new Date(msg.timestamp).toLocaleTimeString()}
                       </div>
