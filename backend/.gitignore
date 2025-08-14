@@ -1,0 +1,30 @@
+# Python
+_pycache_/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Environment
+.env
+.env.local
+
+# Database
+*.db
+*.sqlite
+data/chroma_db/
+
+# Logs
+*.log
+
+# Testing
+.pytest_cache/
+.coverage
+
+# Distribution
+build/
+dist/
+*.egg-info/
