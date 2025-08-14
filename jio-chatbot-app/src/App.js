@@ -465,7 +465,7 @@ function App() {
                       {msg.type === 'bot' ? Icons.robot : Icons.user}
                     </div>
                     <div className={`message-bubble ${msg.error ? 'error' : ''}`}>
-                      <div className="message-text">{msg.text}</div>
+                      <div className="message-text" style={{whiteSpace: 'pre-line'}}>{msg.text}</div>
                       <div className="message-time">
                         {new Date(msg.timestamp).toLocaleTimeString()}
                       </div>
