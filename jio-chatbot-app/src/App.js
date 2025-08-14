@@ -211,10 +211,6 @@ function App() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          {/* Add Logo Here */}
-          <div className="jio-logo">
-            <img src="https://www.jio.com/en-in/4g-logo-img/jio-logo.png" alt="Jio" />
-          </div>
           
           <div className="hero-badge">
             <span className="badge-icon">{Icons.sparkle}</span>
@@ -534,4 +530,4 @@ function App() {
   );
 }
 
-export default App;
+export default App;/* Rebuild: Thu Aug 14 15:29:27 EDT 2025 */
