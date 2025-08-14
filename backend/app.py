@@ -18,14 +18,7 @@ load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app, origins=[
-    "http://localhost:3000",
-    "https://agenticaichatbot-production.up.railway.app/",
-    "https://jio-chatbot.vercel.app",
-    "https://jio-chatbot-*.vercel.app",
-    "https://*.vercel.app"
-])
-
+CORS(app, origins="*", supports_credentials=True, methods=["GET", "POST", "OPTIONS"])
 # Set OpenAI API Key
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 
