@@ -20,6 +20,7 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app, origins=[
     "http://localhost:3000",
+    "https://agenticaichatbot-production.up.railway.app/",
     "https://jio-chatbot.vercel.app",
     "https://jio-chatbot-*.vercel.app",
     "https://*.vercel.app"
