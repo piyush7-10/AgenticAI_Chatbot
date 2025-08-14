@@ -799,52 +799,27 @@ class JioOrchestrator:
         
         full_context = "\n\n".join(context_parts) if context_parts else "No additional context available."
         
-        # UPDATED TASK WITH STRICT FORMATTING
         comprehensive_task = Task(
             description=f"""
             User Query: '{query}'
             
-            AVAILABLE INFORMATION:
+            AVAILABLE INFORMATION FROM SYSTEMS:
             {full_context}
             
-            CRITICAL INSTRUCTIONS - MUST FOLLOW:
+            Instructions:
+            1. USE THE PROVIDED CONTEXT to answer accurately
+            2. Format your response with bullet points for better readability
+            3. Keep each point concise and specific
+            4. For plan details, show: price, data, validity, daily cost
+            5. For comparisons, clearly show the winner
+            6. Include prices in ₹ (Indian Rupees)
+            7. Be friendly and helpful
+            8. Use the exact information provided above
             
-            1. FORMAT RULES:
-            • Use BULLET POINTS only - NO paragraphs
-            • Each bullet = ONE fact (max 15 words)
-            • Total response: 8-12 bullet points maximum
-            • One emoji per section (not every line)
-            
-            2. STRUCTURE:
-            Header (if needed):
-            • Point 1: specific fact
-            • Point 2: specific fact
-            • Point 3: specific fact
-            
-            3. FOR PLANS:
-            ₹XXX Plan:
-            • Data: X GB/day
-            • Validity: X days
-            • Daily cost: ₹XX
-            • Best for: [user type]
-            
-            4. FOR COMPARISONS:
-            • Plan A: key fact
-            • Plan B: key fact
-            • Winner: [plan] - [5 word reason]
-            
-            5. BANNED:
-            • Long sentences
-            • Multiple facts per bullet
-            • Marketing language
-            • Obvious information
-            • Explanations longer than 15 words
-            
-            BE CRISP. BE CLEAR. NO FLUFF.
-            If you write paragraphs, you have failed.
+            Provide a clear, well-structured response using bullet points where appropriate.
             """,
             agent=self.research_agent.get_agent(),
-            expected_output="Bullet-point response, max 12 points, under 150 words total"
+            expected_output="Clear, structured response with specific details"
         )
         
         # Create simplified crew
